@@ -1,0 +1,154 @@
+{
+  "CSE_DS": {
+    "Monday": [
+      "Data Structures", 
+      "Python Programming", 
+      "Database Systems", 
+      "Statistics"
+    ],
+    "Tuesday": [
+      "Machine Learning", 
+      "Data Visualization", 
+      "Python Programming", 
+      "Mathematics"
+    ],
+    "Wednesday": [
+      "Database Systems", 
+      "Statistics", 
+      "Data Structures", 
+      "Communication Skills"
+    ],
+    "Thursday": [
+      "Data Visualization", 
+      "Machine Learning", 
+      "Mathematics", 
+      "Python Programming"
+    ],
+    "Friday": [
+      "Statistics", 
+      "Data Structures", 
+      "Database Systems", 
+      "Machine Learning"
+    ],
+    "Saturday": [
+      "Mathematics", 
+      "Communication Skills", 
+      "Data Visualization", 
+      "Python Programming"
+    ]
+  },
+  "CSEAIML_A": {
+    "Monday": [
+      "Artificial Intelligence",
+      "Deep Learning",
+      "Python Programming",
+      "Mathematics"
+    ],
+    "Tuesday": [
+      "Machine Learning",
+      "Neural Networks",
+      "Data Structures",
+      "Communication Skills"
+    ],
+    "Wednesday": [
+      "Deep Learning",
+      "Mathematics",
+      "Artificial Intelligence",
+      "Python Programming"
+    ],
+    "Thursday": [
+      "Neural Networks",
+      "Machine Learning",
+      "Data Structures",
+      "Deep Learning"
+    ],
+    "Friday": [
+      "Mathematics",
+      "Artificial Intelligence",
+      "Machine Learning",
+      "Neural Networks"
+    ],
+    "Saturday": [
+      "Python Programming",
+      "Communication Skills",
+      "Data Structures",
+      "Artificial Intelligence"
+    ]
+  },
+  "CSEAIML_B": {
+    "Monday": [
+      "Machine_Learning",
+      "Neural Networks",
+      "Python Programming",
+      "Mathematics"
+    ],
+    "Tuesday": [
+      "Artificial Intelligence",
+      "Deep Learning",
+      "Data Structures",
+      "Communication Skills"
+    ],
+    "Wednesday": [
+      "Neural Networks",
+      "Mathematics",
+      "Machine Learning",
+      "Python Programming"
+    ],
+    "Thursday": [
+      "Deep Learning",
+      "Artificial Intelligence",
+      "Data Structures",
+      "Neural Networks"
+    ],
+    "Friday": [
+      "Mathematics",
+      "Machine Learning",
+      "Artificial Intelligence",
+      "Deep Learning"
+    ],
+    "Saturday": [
+      "Python Programming",
+      "Communication Skills",
+      "Data Structures",
+      "Machine Learning"
+    ]
+  },
+  "CSEAIML_C": {
+    "Monday": [
+      "Deep Learning",
+      "Artificial Intelligence",
+      "Python Programming",
+      "Mathematics"
+    ],
+    "Tuesday": [
+      "Neural Networks",
+      "Machine Learning",
+      "Data Structures",
+      "Communication Skills"
+    ],
+    "Wednesday": [
+      "Artificial Intelligence",
+      "Mathematics",
+      "Deep Learning",
+      "Python Programming"
+    ],
+    "Thursday": [
+      "Machine Learning",
+      "Neural Networks",
+      "Data Structures",
+      "Artificial Intelligence"
+    ],
+    "Friday": [
+      "Mathematics",
+      "Deep Learning",
+      "Neural Networks",
+      "Machine Learning"
+    ],
+    "Saturday": [
+      "Python Programming",
+      "Communication Skills",
+      "Data Structures",
+      "Deep Learning"
+    ]
+  }
+}

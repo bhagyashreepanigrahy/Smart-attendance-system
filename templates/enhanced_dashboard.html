@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eduvision - Enhanced Attendance Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .dashboard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+        }
+        
+        .card-custom {
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            transition: all 0.2s ease;
+        }
+        
+        .card-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        
+        .student-card {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .student-card.present {
+            border-left: 4px solid #28a745;
+            background-color: #f8fff9;
+        }
+        
+        .student-card.absent {
+            border-left: 4px solid #dc3545;
+            background-color: #fff8f8;
+        }
+        
+        .attendance-stats {
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+        
+        .section-selector {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        
+        .loading-spinner {
+            display: none;
+        }
+        
+        .success-message, .error-message {
+            display: none;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="dashboard-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-0"><i class="fas fa-graduation-cap me-3"></i>Eduvision Attendance System</h1>
+                    <p class="mb-0 mt-2">Enhanced MySQL-Powered Attendance Management</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="d-flex justify-content-end align-items-center">
+                        <span class="me-3">Welcome, {{ session.username }}</span>
+                        <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <!-- Section Selector -->
+        <div class="section-selector">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Select Section:</label>
+                    <select id="sectionSelect" class="form-select">
+                        <option value="">Choose a section...</option>
+                        <option value="CSE_DS">CSE Data Science</option>
+                        <option value="CSEAIML_A">CSE AIML-A</option>
+                        <option value="CSEAIML_B">CSE AIML-B</option>
+                        <option value="CSEAIML_C">CSE AIML-C</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Subject:</label>
+                    <input type="text" id="subjectInput" class="form-control" placeholder="Enter subject name" value="General">
+                </div>
+            </div>
+        </div>
+
+        <!-- Success/Error Messages -->
+        <div id="successMessage" class="alert alert-success success-message">
+            <i class="fas fa-check-circle me-2"></i>
+            <span id="successText"></span>
+        </div>
+        
+        <div id="errorMessage" class="alert alert-danger error-message">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <span id="errorText"></span>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="text-center loading-spinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading students...</p>
+        </div>
+
+        <!-- Attendance Controls -->
+        <div id="attendanceControls" class="card card-custom mb-4" style="display: none;">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h5 class="mb-0">Quick Actions:</h5>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <button onclick="markAllPresent()" class="btn btn-success btn-sm me-2">
+                            <i class="fas fa-check-double me-1"></i>Mark All Present
+                        </button>
+                        <button onclick="markAllAbsent()" class="btn btn-danger btn-sm me-2">
+                            <i class="fas fa-times-circle me-1"></i>Mark All Absent
+                        </button>
+                        <button onclick="saveAttendance()" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Save Attendance
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance Statistics -->
+        <div id="attendanceStats" class="attendance-stats mb-4" style="display: none;">
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <h2 id="totalStudents" class="mb-1">0</h2>
+                    <p class="mb-0">Total Students</p>
+                </div>
+                <div class="col-md-3">
+                    <h2 id="presentCount" class="mb-1">0</h2>
+                    <p class="mb-0">Present</p>
+                </div>
+                <div class="col-md-3">
+                    <h2 id="absentCount" class="mb-1">0</h2>
+                    <p class="mb-0">Absent</p>
+                </div>
+                <div class="col-md-3">
+                    <h2 id="attendancePercentage" class="mb-1">0%</h2>
+                    <p class="mb-0">Attendance Rate</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students Grid -->
+        <div id="studentsGrid" class="row">
+            <!-- Students will be loaded here dynamically -->
+        </div>
+    </div>
+
+    <!-- Student Profile Modal -->
+    <div class="modal fade" id="studentProfileModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Student Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="studentProfileContent">
+                        <!-- Student profile content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentStudents = [];
+        let attendanceData = {};
+
+        document.getElementById('sectionSelect').addEventListener('change', loadStudents);
+
+        function showLoading() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('studentsGrid').innerHTML = '';
+            document.getElementById('attendanceControls').style.display = 'none';
+            document.getElementById('attendanceStats').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+        }
+
+        function showMessage(text, isSuccess = true) {
+            const successMsg = document.getElementById('successMessage');
+            const errorMsg = document.getElementById('errorMessage');
+            
+            if (isSuccess) {
+                document.getElementById('successText').textContent = text;
+                successMsg.style.display = 'block';
+                errorMsg.style.display = 'none';
+                setTimeout(() => successMsg.style.display = 'none', 5000);
+            } else {
+                document.getElementById('errorText').textContent = text;
+                errorMsg.style.display = 'block';
+                successMsg.style.display = 'none';
+                setTimeout(() => errorMsg.style.display = 'none', 8000);
+            }
+        }
+
+        async function loadStudents() {
+            const sectionId = document.getElementById('sectionSelect').value;
+            if (!sectionId) {
+                document.getElementById('studentsGrid').innerHTML = '';
+                document.getElementById('attendanceControls').style.display = 'none';
+                document.getElementById('attendanceStats').style.display = 'none';
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                // Generate student list for the section (simplified approach)
+                currentStudents = generateStudentList(sectionId);
+                displayStudents(currentStudents);
+                document.getElementById('attendanceControls').style.display = 'block';
+                updateStats();
+            } catch (error) {
+                console.error('Error loading students:', error);
+                showMessage('Failed to load students: ' + error.message, false);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function generateStudentList(sectionId) {
+            // Generate student list based on section
+            const students = [];
+            let prefix, start, end;
+            
+            switch(sectionId) {
+                case 'CSE_DS':
+                    prefix = '23CSEDS';
+                    start = 1;
+                    end = 60;
+                    break;
+                case 'CSEAIML_A':
+                    prefix = '23CSEAIML';
+                    start = 1;
+                    end = 64;
+                    break;
+                case 'CSEAIML_B':
+                    prefix = '23CSEAIML';
+                    start = 65;
+                    end = 128;
+                    break;
+                case 'CSEAIML_C':
+                    prefix = '23CSEAIML';
+                    start = 129;
+                    end = 204;
+                    break;
+                default:
+                    return [];
+            }
+
+            for (let i = start; i <= end; i++) {
+                const rollNo = prefix + String(i).padStart(3, '0');
+                students.push({
+                    rollNo: rollNo,
+                    name: `Student ${rollNo}`,
+                    mobile: '9999999999'
+                });
+                attendanceData[rollNo] = 0; // Default to absent
+            }
+
+            return students;
+        }
+
+        function displayStudents(students) {
+            const grid = document.getElementById('studentsGrid');
+            grid.innerHTML = '';
+
+            students.forEach(student => {
+                const isPresent = attendanceData[student.rollNo] === 1;
+                const card = document.createElement('div');
+                card.className = 'col-md-4 col-lg-3 mb-3';
+                card.innerHTML = `
+                    <div class="card student-card ${isPresent ? 'present' : 'absent'}" onclick="toggleAttendance('${student.rollNo}')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-user-circle fa-2x mb-2 ${isPresent ? 'text-success' : 'text-danger'}"></i>
+                            <h6 class="card-title mb-1">${student.rollNo}</h6>
+                            <p class="card-text small text-muted mb-2">${student.name}</p>
+                            <span class="badge ${isPresent ? 'bg-success' : 'bg-danger'}">
+                                ${isPresent ? 'Present' : 'Absent'}
+                            </span>
+                            <br>
+                            <small class="text-muted mt-1 d-block">
+                                <i class="fas fa-mouse-pointer"></i> Click to toggle
+                            </small>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleAttendance(rollNo) {
+            attendanceData[rollNo] = attendanceData[rollNo] === 1 ? 0 : 1;
+            displayStudents(currentStudents);
+            updateStats();
+        }
+
+        function markAllPresent() {
+            Object.keys(attendanceData).forEach(rollNo => {
+                attendanceData[rollNo] = 1;
+            });
+            displayStudents(currentStudents);
+            updateStats();
+            showMessage('All students marked as present!');
+        }
+
+        function markAllAbsent() {
+            Object.keys(attendanceData).forEach(rollNo => {
+                attendanceData[rollNo] = 0;
+            });
+            displayStudents(currentStudents);
+            updateStats();
+            showMessage('All students marked as absent!');
+        }
+
+        function updateStats() {
+            const total = Object.keys(attendanceData).length;
+            const present = Object.values(attendanceData).filter(status => status === 1).length;
+            const absent = total - present;
+            const percentage = total > 0 ? Math.round((present / total) * 100) : 0;
+
+            document.getElementById('totalStudents').textContent = total;
+            document.getElementById('presentCount').textContent = present;
+            document.getElementById('absentCount').textContent = absent;
+            document.getElementById('attendancePercentage').textContent = percentage + '%';
+            document.getElementById('attendanceStats').style.display = 'block';
+        }
+
+        async function saveAttendance() {
+            const sectionId = document.getElementById('sectionSelect').value;
+            const subject = document.getElementById('subjectInput').value || 'General';
+
+            if (!sectionId) {
+                showMessage('Please select a section first!', false);
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/record_attendance', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        section_id: sectionId,
+                        attendance: attendanceData,
+                        subject: subject
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showMessage(`✅ ${result.message}`);
+                } else {
+                    showMessage(result.error || 'Failed to save attendance', false);
+                }
+            } catch (error) {
+                console.error('Error saving attendance:', error);
+                showMessage('Network error while saving attendance', false);
+            }
+        }
+
+        async function viewStudentProfile(rollNo) {
+            try {
+                const response = await fetch(`/api/get_student_profile/${rollNo}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    const modalContent = document.getElementById('studentProfileContent');
+                    modalContent.innerHTML = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Student Information</h6>
+                                <p><strong>Roll Number:</strong> ${result.student.roll_number || rollNo}</p>
+                                <p><strong>Name:</strong> ${result.student.name || 'N/A'}</p>
+                                <p><strong>Email:</strong> ${result.student.email || 'N/A'}</p>
+                                <p><strong>Mobile:</strong> ${result.student.mobile || 'N/A'}</p>
+                                <p><strong>Section:</strong> ${result.student.section_id || 'N/A'}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Attendance Summary</h6>
+                                ${result.attendance_history ? 
+                                    result.attendance_history.map(record => 
+                                        `<p><strong>${record.attendance_date}:</strong> ${record.status}</p>`
+                                    ).join('') : 
+                                    '<p>No attendance data available</p>'}
+                            </div>
+                        </div>
+                    `;
+                    
+                    new bootstrap.Modal(document.getElementById('studentProfileModal')).show();
+                } else {
+                    showMessage('Failed to load student profile', false);
+                }
+            } catch (error) {
+                console.error('Error loading student profile:', error);
+                showMessage('Network error while loading student profile', false);
+            }
+        }
+
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Enhanced Attendance Dashboard loaded successfully!');
+        });
+    </script>
+</body>
+</html>

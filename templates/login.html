@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - AI Attendance System | GIET University</title>
+    <meta name="description" content="Secure login portal for students and faculty to access GIET University's AI-powered attendance management system.">
+    <meta name="theme-color" content="#667eea">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --accent-gradient: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 100%);
+            --glass-background: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #2c3e50;
+            --text-secondary: #6c757d;
+            --shadow-light: 0 8px 32px rgba(102, 126, 234, 0.2);
+            --shadow-medium: 0 15px 45px rgba(102, 126, 234, 0.3);
+            --shadow-heavy: 0 20px 60px rgba(0, 0, 0, 0.15);
+            --border-radius: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow: hidden;
+            position: relative;
+            padding: 1rem;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
+            animation: backgroundShift 20s ease-in-out infinite;
+        }
+        
+        @keyframes backgroundShift {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.6; }
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 3.5rem 3rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-heavy);
+            width: 100%;
+            max-width: 500px;
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            position: relative;
+            z-index: 10;
+            transform: translateY(0);
+            transition: var(--transition);
+            overflow: hidden;
+        }
+        
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--secondary-gradient);
+            border-radius: var(--border-radius);
+            z-index: -1;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .login-container:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .login-container:hover::before {
+            opacity: 0.1;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .university-logo {
+            width: 90px;
+            height: 90px;
+            background: var(--secondary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: var(--shadow-light);
+            position: relative;
+            transition: var(--transition);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .university-logo::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            z-index: -1;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .university-logo:hover {
+            transform: scale(1.05) rotate(5deg);
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .university-logo:hover::before {
+            opacity: 0.2;
+        }
+        
+        .university-logo i {
+            font-size: 2.8rem;
+            color: white;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+        
+        .login-header h2 {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            font-size: 2.2rem;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+        
+        .login-header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            margin-bottom: 0;
+        }
+        
+        .form-control {
+            border: 2px solid rgba(102, 126, 234, 0.1);
+            border-radius: 16px;
+            padding: 1.1rem 1.4rem;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: var(--transition);
+            background: rgba(248, 249, 250, 0.9);
+            color: var(--text-primary);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 
+                0 0 0 0.25rem rgba(102, 126, 234, 0.15),
+                inset 0 1px 3px rgba(0, 0, 0, 0.05),
+                0 4px 12px rgba(102, 126, 234, 0.1);
+            background: white;
+            transform: translateY(-3px);
+            outline: none;
+        }
+        
+        .form-control::placeholder {
+            color: #adb5bd;
+            font-weight: 400;
+        }
+        
+        .form-label {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            letter-spacing: 0.01em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .input-group {
+            position: relative;
+        }
+        
+        .input-group-text {
+            background: rgba(102, 126, 234, 0.05);
+            border: 2px solid rgba(102, 126, 234, 0.1);
+            border-right: none;
+            border-radius: 16px 0 0 16px;
+            color: #667eea;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 50px;
+        }
+        
+        .input-group:focus-within .input-group-text {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: #667eea;
+            transform: translateY(-3px);
+        }
+        
+        .btn-login {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 16px;
+            padding: 1.2rem 2.5rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 0.02em;
+            transition: var(--transition);
+            box-shadow: var(--shadow-light);
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: var(--shadow-medium);
+            background: linear-gradient(135deg, #7c8aed 0%, #8a68c4 100%);
+        }
+        
+        .btn-login:active {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: var(--shadow-light);
+        }
+        
+        .btn-login:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .btn-login:hover::before {
+            left: 100%;
+        }
+        
+        .alert {
+            border-radius: 16px;
+            border: none;
+            padding: 1.2rem 1.5rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border: 1px solid rgba(220, 53, 69, 0.2);
+        }
+        
+        .alert-success {
+            background: rgba(25, 135, 84, 0.1);
+            color: #198754;
+            border: 1px solid rgba(25, 135, 84, 0.2);
+        }
+        
+        .demo-accordion .accordion-button {
+            border-radius: 12px;
+            font-weight: 600;
+            background: rgba(102, 126, 234, 0.1);
+            border: none;
+        }
+        
+        .demo-accordion .accordion-button:not(.collapsed) {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            box-shadow: none;
+        }
+        
+        .demo-accordion .accordion-body {
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 0 0 12px 12px;
+        }
+        
+        .credential-badge {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            margin: 0.25rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .floating-icons {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .floating-icon {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.1);
+            font-size: 2rem;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+        
+        /* Enhanced responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 0.5rem;
+            }
+            
+            .login-container {
+                padding: 2.5rem 2rem;
+                margin: 0.5rem;
+                max-width: 100%;
+            }
+            
+            .login-header h2 {
+                font-size: 1.9rem;
+            }
+            
+            .university-logo {
+                width: 75px;
+                height: 75px;
+            }
+            
+            .university-logo i {
+                font-size: 2.2rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .login-container {
+                padding: 2rem 1.5rem;
+            }
+            
+            .login-header h2 {
+                font-size: 1.7rem;
+            }
+            
+            .form-control, .input-group-text {
+                padding: 1rem;
+            }
+            
+            .btn-login {
+                padding: 1rem 2rem;
+                font-size: 1rem;
+            }
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* Loading animation */
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating background icons -->
+    <div class="floating-icons">
+        <i class="bi bi-camera-video floating-icon" style="top: 10%; left: 10%; animation-delay: 0s;"></i>
+        <i class="bi bi-person-check floating-icon" style="top: 20%; right: 15%; animation-delay: 1s;"></i>
+        <i class="bi bi-clock-history floating-icon" style="bottom: 30%; left: 15%; animation-delay: 2s;"></i>
+        <i class="bi bi-graph-up floating-icon" style="bottom: 20%; right: 10%; animation-delay: 3s;"></i>
+        <i class="bi bi-database floating-icon" style="top: 40%; left: 20%; animation-delay: 4s;"></i>
+    </div>
+
+    <div class="login-container animate__animated animate__fadeInUp">
+        <div class="login-header">
+            <div class="university-logo">
+                <i class="bi bi-mortarboard"></i>
+            </div>
+            <h2>Student & Faculty Login</h2>
+            <p>AI-Powered Attendance System | GIET University</p>
+        </div>
+        
+        <form id="loginForm" novalidate>
+            <div class="mb-4">
+                <label for="username" class="form-label">
+                    <i class="bi bi-person-circle"></i>
+                    Username
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        id="username" 
+                        name="username" 
+                        placeholder="Enter your faculty ID"
+                        autocomplete="username"
+                        autocapitalize="off"
+                        spellcheck="false"
+                        required
+                        aria-describedby="usernameHelp">
+                </div>
+                <div class="invalid-feedback" id="usernameError"></div>
+            </div>
+            
+            <div class="mb-4">
+                <label for="password" class="form-label">
+                    <i class="bi bi-shield-lock"></i>
+                    Password
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    <input 
+                        type="password" 
+                        class="form-control" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Enter your secure password"
+                        autocomplete="current-password"
+                        required
+                        aria-describedby="passwordHelp">
+                    <button class="btn btn-outline-secondary" type="button" id="togglePassword" aria-label="Toggle password visibility">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+                <div class="invalid-feedback" id="passwordError"></div>
+            </div>
+            
+            <button type="submit" class="btn btn-login mb-4" id="loginButton">
+                <span class="loading-spinner" id="loginSpinner"></span>
+                <span id="loginText">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>
+                    Sign In to Dashboard
+                </span>
+            </button>
+        </form>
+        
+        <div class="alert alert-danger mt-3 animate__animated animate__fadeIn" id="errorAlert" style="display: none;">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span id="errorMessage"></span>
+        </div>
+        
+        
+        <div class="text-center mt-3 pt-3 border-top">
+            <div class="mb-3">
+                <small class="text-muted d-flex align-items-center justify-content-center gap-2">
+                    <i class="bi bi-shield-check text-success"></i>
+                    <span>256-bit SSL Encrypted Connection</span>
+                </small>
+            </div>
+            <div class="d-flex justify-content-center gap-3 text-muted">
+                <small class="d-flex align-items-center gap-1">
+                    <i class="bi bi-cpu"></i>
+                    AI Powered
+                </small>
+                <small class="d-flex align-items-center gap-1">
+                    <i class="bi bi-mortarboard"></i>
+                    GIET University
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Enhanced form validation and submission
+        const form = document.getElementById('loginForm');
+        const usernameField = document.getElementById('username');
+        const passwordField = document.getElementById('password');
+        const loginButton = document.getElementById('loginButton');
+        
+        // Password visibility toggle
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('bi-eye');
+            this.querySelector('i').classList.toggle('bi-eye-slash');
+        });
+        
+        // Real-time validation
+        function validateField(field, errorElement, validationFn) {
+            const isValid = validationFn(field.value);
+            if (isValid) {
+                field.classList.remove('is-invalid');
+                field.classList.add('is-valid');
+                errorElement.textContent = '';
+            } else {
+                field.classList.remove('is-valid');
+                field.classList.add('is-invalid');
+            }
+            return isValid;
+        }
+        
+        usernameField.addEventListener('input', function() {
+            validateField(this, document.getElementById('usernameError'), 
+                value => value.length >= 3
+            );
+        });
+        
+        passwordField.addEventListener('input', function() {
+            validateField(this, document.getElementById('passwordError'), 
+                value => value.length >= 4
+            );
+        });
+        
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = usernameField.value.trim();
+            const password = passwordField.value;
+            const errorAlert = document.getElementById('errorAlert');
+            const errorMessage = document.getElementById('errorMessage');
+            const loginSpinner = document.getElementById('loginSpinner');
+            const loginText = document.getElementById('loginText');
+            
+            // Validate form
+            const isUsernameValid = validateField(usernameField, document.getElementById('usernameError'), 
+                value => value.length >= 3
+            );
+            const isPasswordValid = validateField(passwordField, document.getElementById('passwordError'), 
+                value => value.length >= 4
+            );
+            
+            if (!isUsernameValid || !isPasswordValid) {
+                return;
+            }
+            
+            // Hide previous errors
+            errorAlert.style.display = 'none';
+            
+            // Show loading state
+            loginButton.disabled = true;
+            loginSpinner.style.display = 'inline-block';
+            loginText.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Authenticating...';
+            
+            try {
+                const formData = new FormData();
+                formData.append('username', username);
+                formData.append('password', password);
+                
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Success state
+                    loginText.innerHTML = '<i class="bi bi-check-circle me-2"></i>Success! Redirecting...';
+                    loginButton.classList.add('btn-success');
+                    document.querySelector('.login-container').classList.add('animate__pulse');
+                    
+                    setTimeout(() => {
+                        window.location.href = data.redirect || '/dashboard';
+                    }, 1500);
+                } else {
+                    throw new Error(data.message || 'Invalid credentials');
+                }
+            } catch (error) {
+                // Show error with animation
+                errorMessage.textContent = error.message || 'Network error. Please try again.';
+                errorAlert.style.display = 'block';
+                errorAlert.classList.add('animate__shakeX');
+                
+                // Reset loading state
+                loginButton.disabled = false;
+                loginSpinner.style.display = 'none';
+                loginText.innerHTML = '<i class="bi bi-box-arrow-in-right me-2"></i>Sign In to Dashboard';
+                
+                // Add error shake to form
+                document.querySelector('.login-container').classList.add('animate__headShake');
+            }
+        });
+
+        // Animation cleanup
+        function cleanupAnimations(element, ...classNames) {
+            element.addEventListener('animationend', function() {
+                classNames.forEach(className => {
+                    this.classList.remove(className);
+                });
+            });
+        }
+        
+        cleanupAnimations(document.getElementById('errorAlert'), 'animate__shakeX');
+        cleanupAnimations(document.querySelector('.login-container'), 
+            'animate__tada', 'animate__pulse', 'animate__headShake');
+        
+        // Enhanced focus effects with better accessibility
+        const inputs = document.querySelectorAll('.form-control');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focus');
+                // Announce to screen readers
+                this.setAttribute('aria-expanded', 'true');
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('focus');
+                this.setAttribute('aria-expanded', 'false');
+            });
+        });
+        
+        // Keyboard navigation enhancements
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
+                e.preventDefault();
+                const inputs = Array.from(document.querySelectorAll('input[required]'));
+                const currentIndex = inputs.indexOf(e.target);
+                const nextInput = inputs[currentIndex + 1];
+                
+                if (nextInput) {
+                    nextInput.focus();
+                } else {
+                    form.dispatchEvent(new Event('submit'));
+                }
+            }
+        });
+        
+        // Auto-focus first input on page load
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                usernameField.focus();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

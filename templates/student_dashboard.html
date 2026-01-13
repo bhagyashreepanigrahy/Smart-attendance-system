@@ -1,0 +1,2077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - GIET University</title>
+    <meta name="description" content="Student dashboard for viewing attendance and academic performance at GIET University.">
+    <meta name="theme-color" content="#667eea">
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    
+    <style>
+        :root {
+            --bs-primary: #0d6efd;
+            --bs-secondary: #6c757d;
+            --bs-success: #198754;
+            --bs-info: #0dcaf0;
+            --bs-warning: #ffc107;
+            --bs-danger: #dc3545;
+            --bs-light: #f8f9fa;
+            --bs-dark: #212529;
+            --primary-gradient: linear-gradient(135deg, var(--bs-primary), #0a58ca);
+            --success-gradient: linear-gradient(135deg, var(--bs-success), #146c43);
+            --danger-gradient: linear-gradient(135deg, var(--bs-danger), #b02a37);
+            --warning-gradient: linear-gradient(135deg, var(--bs-warning), #e0a800);
+            --info-gradient: linear-gradient(135deg, var(--bs-info), #3dd5f3);
+            --dark-gradient: linear-gradient(135deg, #2c3e50, #34495e);
+            --border-radius: 0.5rem;
+            --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            --shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+            --transition: all 0.3s ease;
+            --text-primary: var(--bs-dark);
+            --text-secondary: var(--bs-secondary);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bs-light);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--dark-gradient);
+            color: white;
+            z-index: 1000;
+            transition: var(--transition);
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .sidebar-header .logo {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .sidebar-header h4 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .sidebar-header p {
+            margin: 0.25rem 0 0;
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .user-profile {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        .user-avatar-fallback {
+            width: 100%;
+            height: 100%;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .user-info h6 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .user-info p {
+            margin: 0;
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .nav-section {
+            padding: 1rem 0;
+        }
+
+        .nav-section-title {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.6;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-item {
+            margin: 0.25rem 1rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            font-weight: 500;
+            gap: 0.75rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(4px);
+        }
+
+        .nav-link i {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 0;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Header */
+        .student-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 0;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .student-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%), 
+                        linear-gradient(-45deg, rgba(255,255,255,0.1) 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.1) 75%), 
+                        linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.1) 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            pointer-events: none;
+            animation: float 20s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-20px); }
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .student-welcome h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin: 0;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 2;
+        }
+
+        .student-welcome p {
+            font-size: 1.2rem;
+            margin: 0.5rem 0 0 0;
+            opacity: 0.95;
+            text-shadow: 0 1px 5px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 2;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-header {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-header:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* Student Info Card */
+        .student-info-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin: 2rem auto;
+            max-width: 1200px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .student-profile-header {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            padding: 3rem 2rem;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .profile-photo-large {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid white;
+            box-shadow: var(--shadow);
+        }
+
+        .profile-photo-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-placeholder-large {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .student-details h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .student-details p {
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .student-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Attendance Summary */
+        .attendance-summary-section {
+            margin: 2rem;
+            padding: 2rem;
+            background: #f8fafc;
+            border-radius: var(--border-radius);
+            border: 1px solid #e2e8f0;
+        }
+
+        .summary-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .summary-header h3 {
+            color: var(--text-primary);
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .attendance-progress-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .progress-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .progress-item.total {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-color: #0ea5e9;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .progress-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .progress-percentage {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 1.2rem;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 16px;
+            background-color: #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 8px;
+            transition: width 0.8s ease;
+            position: relative;
+            background-size: 20px 20px;
+        }
+
+        .progress-bar.theory {
+            background: var(--success-gradient);
+        }
+
+        .progress-bar.lab {
+            background: var(--info-gradient);
+        }
+
+        .progress-bar.total {
+            background: var(--primary-gradient);
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255,255,255,0.3) 10px,
+                rgba(255,255,255,0.3) 20px
+            );
+            animation: progress-shine 2s infinite;
+        }
+
+        @keyframes progress-shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .attendance-status {
+            text-align: center;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .attendance-status i {
+            font-size: 1.5rem;
+        }
+
+        .status-text {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .status-excellent { color: var(--bs-success); }
+        .status-good { color: var(--bs-info); }
+        .status-warning { color: var(--bs-warning); }
+        .status-danger { color: var(--bs-danger); }
+
+        /* Attendance History Table */
+        .attendance-history-section {
+            margin: 2rem;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .history-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 1.5rem 2rem;
+        }
+
+        .history-header h3 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .attendance-table-container {
+            max-height: 400px;
+            overflow: auto;
+        }
+
+        .attendance-history-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.9rem;
+        }
+
+        .attendance-history-table th {
+            background: #f8fafc;
+            color: var(--text-primary);
+            font-weight: 600;
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 2px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .attendance-history-table th.sticky-left {
+            position: sticky;
+            left: 0;
+            background: #e2e8f0;
+            z-index: 11;
+        }
+
+        .attendance-history-table td {
+            padding: 0.75rem;
+            text-align: center;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .attendance-history-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .attendance-status-icon {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: white;
+        }
+
+        .attendance-status-icon.present {
+            background-color: #10b981;
+        }
+
+        .attendance-status-icon.absent {
+            background-color: var(--bs-danger);
+        }
+        
+        /* Academic Performance Section */
+        .academic-performance-section {
+            margin: 2rem;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+        
+        .performance-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 1.5rem 2rem;
+        }
+        
+        .performance-header h3 {
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .performance-content {
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+        
+        .sgpa-chart-container {
+            background: var(--bs-light);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .chart-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-header h5 {
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .sgpa-chart {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        .perf-stat-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: var(--transition);
+        }
+        
+        .perf-stat-card:hover {
+            box-shadow: var(--shadow-sm);
+            transform: translateY(-1px);
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .stat-content .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .stat-content .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Stat icon colors */
+        .stat-icon.bg-primary { background-color: var(--bs-primary) !important; }
+        .stat-icon.bg-success { background-color: var(--bs-success) !important; }
+        .stat-icon.bg-info { background-color: var(--bs-info) !important; }
+        .stat-icon.bg-warning { background-color: var(--bs-warning) !important; }
+        
+        /* Section Cards */
+        .section-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            margin: 2rem;
+            overflow: hidden;
+            border: 1px solid #e8ecef;
+            transition: var(--transition);
+        }
+        
+        .section-card:hover {
+            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            font-weight: 600;
+        }
+        
+        .section-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .section-header i {
+            font-size: 1.4rem;
+        }
+        
+        /* Table Styling */
+        .subject-attendance-table,
+        .semester-performance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+        
+        .subject-attendance-table th,
+        .semester-performance-table th {
+            background: #f8f9fa;
+            color: var(--text-primary);
+            font-weight: 600;
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .subject-attendance-table td,
+        .semester-performance-table td {
+            padding: 0.875rem 1rem;
+            border-bottom: 1px solid #f1f3f4;
+            transition: background-color 0.2s;
+        }
+        
+        .subject-attendance-table tr:hover,
+        .semester-performance-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* Policy Content */
+        .policy-content {
+            background: #f8f9fa;
+            border-radius: 0 0 15px 15px;
+            padding: 1.5rem;
+        }
+        
+        .policy-content ul {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+        
+        .policy-content li {
+            margin: 0.25rem 0;
+            color: var(--text-secondary);
+        }
+        
+        /* Timetable Styling */
+        .timetable-container {
+            padding: 0;
+        }
+        
+        .timetable-table {
+            margin: 0;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        .timetable-table th {
+            background: #f8f9fa;
+            padding: 1rem;
+            font-weight: 600;
+            border: 1px solid #dee2e6;
+        }
+        
+        .timetable-table td {
+            padding: 0.875rem 1rem;
+            border: 1px solid #dee2e6;
+            vertical-align: middle;
+        }
+        
+        .timetable-table .day-cell {
+            font-weight: 700;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: var(--text-primary);
+            text-align: center;
+        }
+        
+        .timetable-table .day-start {
+            border-top: 3px solid var(--bs-primary);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem;
+        }
+
+        .action-btn {
+            padding: 1rem 2rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .action-btn.primary {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .action-btn.secondary {
+            background: #f8fafc;
+            color: var(--text-primary);
+            border: 2px solid #e2e8f0;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+            }
+            
+            .sidebar .nav-link span {
+                display: none;
+            }
+            
+            .sidebar .user-info h6,
+            .sidebar .user-info p {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+            
+            .performance-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .student-profile-header {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 1.5rem;
+            }
+
+            .student-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .header-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .action-btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+            
+            .attendance-history-table th.sticky-left {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+            <h4>GIET University</h4>
+            <p>Student Portal</p>
+        </div>
+        
+        <div class="user-profile">
+            <div class="user-avatar">
+                <img src="https://ui-avatars.com/api/?name=Student+Name&background=random" 
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" 
+                     alt="Student">
+                <div class="user-avatar-fallback" style="display: none;">
+                    <span>SN</span>
+                </div>
+            </div>
+            <div class="user-info">
+                <h6>Student Name</h6>
+                <p>S12345</p>
+            </div>
+        </div>
+        
+        <div class="nav-section">
+            <div class="nav-section-title">Main Menu</div>
+            <div class="nav-item">
+                <a href="#dashboard" class="nav-link active" data-tab="dashboard">
+                    <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="#attendance" class="nav-link" data-tab="attendance">
+                    <i class="bi bi-calendar-check"></i> <span>Attendance</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="#online-attendance" class="nav-link" data-tab="online-attendance">
+                    <i class="bi bi-laptop"></i> <span>Online Classes</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="#academics" class="nav-link" data-tab="academics">
+                    <i class="bi bi-book"></i> <span>Academics</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="#timetable" class="nav-link" data-tab="timetable">
+                    <i class="bi bi-clock"></i> <span>Timetable</span>
+                </a>
+            </div>
+        </div>
+        
+        <div class="nav-section">
+            <div class="nav-section-title">Account</div>
+            <div class="nav-item">
+                <a href="#profile" class="nav-link" data-tab="profile">
+                    <i class="bi bi-person"></i> <span>Profile</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="student-header">
+            <div class="header-content">
+                <div class="student-welcome">
+                    <h1>Welcome, Student Name!</h1>
+                    <p>Track your attendance and academic progress</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-header" onclick="refreshData()">
+                        <i class="bi bi-arrow-clockwise"></i>
+                        Refresh
+                    </button>
+                    <a href="#" class="btn-header">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content Container -->
+        <div class="tab-container">
+            <!-- Dashboard Tab (default active) -->
+            <div id="dashboard" class="tab-content active">
+                <!-- Student Info Card -->
+                <div class="student-info-card">
+                    <div class="student-profile-header">
+                        <div class="profile-photo-large" id="studentPhotoContainer">
+                            <img src="https://ui-avatars.com/api/?name=Student+Name&background=random" 
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" 
+                                 alt="Student">
+                            <div class="photo-placeholder-large" style="display: none;">
+                                <span>SN</span>
+                            </div>
+                        </div>
+                        
+                        <div class="student-details">
+                            <h2 id="studentName">Student Name</h2>
+                            <p><strong>Roll Number:</strong> S12345</p>
+                            <p><strong>Email:</strong> <span id="studentEmail">student.name@giet.edu</span></p>
+                            <p><strong>Mobile:</strong> <span id="studentMobile">9876543210</span></p>
+                            <p><strong>Department:</strong> Computer Science & Engineering</p>
+                        </div>
+                        
+                        <div class="student-stats">
+                            <div class="stat-card">
+                                <div class="stat-value" id="studentCGPA">8.2</div>
+                                <div class="stat-label">CGPA</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="totalClasses">142</div>
+                                <div class="stat-label">Total Classes</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attendance Summary Section -->
+                    <div class="attendance-summary-section">
+                        <div class="summary-header">
+                            <h3><i class="bi bi-bar-chart"></i> Attendance Summary</h3>
+                        </div>
+                        
+                        <div class="attendance-progress-bars">
+                            <div class="progress-item total">
+                                <div class="progress-header">
+                                    <span class="progress-label">Overall Attendance</span>
+                                    <span class="progress-percentage" id="totalAttendancePercent">85%</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar total" id="totalAttendanceBar" style="width: 85%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="attendance-status" id="attendanceStatus">
+                            <i class="bi bi-check-circle-fill status-excellent"></i>
+                            <span class="status-text status-excellent">Very Good Attendance</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Academic Performance Section -->
+                <div class="academic-performance-section">
+                    <div class="performance-header">
+                        <h3><i class="bi bi-trophy"></i> Academic Performance</h3>
+                    </div>
+                    
+                    <div class="performance-content">
+                        <div class="sgpa-chart-container">
+                            <div class="chart-header">
+                                <h5>SGPA Trend</h5>
+                                <small class="text-muted">Semester-wise Grade Point Average</small>
+                            </div>
+                            <div class="sgpa-chart">
+                                <canvas id="sgpaChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="performance-stats">
+                            <div class="stat-grid">
+                                <div class="perf-stat-card">
+                                    <div class="stat-icon bg-primary">
+                                        <i class="bi bi-graph-up"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <div class="stat-value" id="currentSGPA">8.5</div>
+                                        <div class="stat-label">Current SGPA</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="perf-stat-card">
+                                    <div class="stat-icon bg-success">
+                                        <i class="bi bi-award"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <div class="stat-value" id="overallCGPA">8.2</div>
+                                        <div class="stat-label">Overall CGPA</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="perf-stat-card">
+                                    <div class="stat-icon bg-info">
+                                        <i class="bi bi-mortarboard"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <div class="stat-value" id="completedSemesters">6</div>
+                                        <div class="stat-label">Semesters</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="perf-stat-card">
+                                    <div class="stat-icon bg-warning">
+                                        <i class="bi bi-bookmark-star"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <div class="stat-value" id="academicRank">#25</div>
+                                        <div class="stat-label">Class Rank</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Attendance Tab -->
+            <div id="attendance" class="tab-content">
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3><i class="bi bi-calendar-check"></i> Subject-wise Attendance</h3>
+                    </div>
+                    <div class="subject-attendance-container">
+                        <table class="subject-attendance-table">
+                            <thead>
+                                <tr>
+                                    <th>Subject Code</th>
+                                    <th>Subject Name</th>
+                                    <th>Theory</th>
+                                    <th>Practical</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="subjectAttendanceBody">
+                                <tr>
+                                    <td>CS101</td>
+                                    <td>Introduction to Programming</td>
+                                    <td>85%</td>
+                                    <td>90%</td>
+                                    <td>87%</td>
+                                    <td class="text-success"><i class="bi bi-check-circle"></i> Good</td>
+                                </tr>
+                                <tr>
+                                    <td>CS102</td>
+                                    <td>Data Structures</td>
+                                    <td>78%</td>
+                                    <td>82%</td>
+                                    <td>80%</td>
+                                    <td class="text-success"><i class="bi bi-check-circle"></i> Good</td>
+                                </tr>
+                                <tr>
+                                    <td>MA101</td>
+                                    <td>Engineering Mathematics</td>
+                                    <td>72%</td>
+                                    <td>N/A</td>
+                                    <td>72%</td>
+                                    <td class="text-warning"><i class="bi bi-exclamation-triangle"></i> Warning</td>
+                                </tr>
+                                <tr>
+                                    <td>PH101</td>
+                                    <td>Engineering Physics</td>
+                                    <td>68%</td>
+                                    <td>75%</td>
+                                    <td>71%</td>
+                                    <td class="text-warning"><i class="bi bi-exclamation-triangle"></i> Warning</td>
+                                </tr>
+                                <tr>
+                                    <td>EC101</td>
+                                    <td>Basic Electronics</td>
+                                    <td>90%</td>
+                                    <td>95%</td>
+                                    <td>92%</td>
+                                    <td class="text-success"><i class="bi bi-check-circle"></i> Good</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="section-card mt-4">
+                    <div class="section-header">
+                        <h3><i class="bi bi-info-circle"></i> Attendance Policy</h3>
+                    </div>
+                    <div class="policy-content">
+                        <p><strong>Minimum Attendance Required:</strong> 75%</p>
+                        <p><strong>Consequences of Low Attendance:</strong></p>
+                        <ul>
+                            <li>Below 75%: Not eligible for final examinations</li>
+                            <li>65-75%: Eligible with condonation fee</li>
+                            <li>Below 65%: Must repeat the semester</li>
+                        </ul>
+                        <p><strong>Medical Leave:</strong> Submit medical certificates within 7 days of absence</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Online Attendance Tab -->
+            <div id="online-attendance" class="tab-content">
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3><i class="bi bi-laptop"></i> Online Class Attendance</h3>
+                    </div>
+                    
+                    <!-- Active Online Sessions -->
+                    <div class="online-sessions-container">
+                        <h5><i class="bi bi-broadcast"></i> Active Online Sessions</h5>
+                        <div id="active-online-sessions">
+                            <div class="text-center py-4 text-muted">
+                                <i class="bi bi-wifi-off fs-1 mb-3 d-block"></i>
+                                <p>No active online sessions at the moment</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Token Entry Section -->
+                    <div class="token-entry-section mt-4">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card border-primary">
+                                    <div class="card-header bg-primary text-white">
+                                        <h6 class="mb-0"><i class="bi bi-key"></i> Enter Attendance Token</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="tokenForm">
+                                            <div class="mb-3">
+                                                <label for="attendanceToken" class="form-label">Attendance Token</label>
+                                                <input type="text" class="form-control" id="attendanceToken" 
+                                                       placeholder="Enter 6-digit token" maxlength="6" pattern="[0-9]{6}">
+                                            </div>
+                                            <button type="submit" class="btn btn-primary w-100">
+                                                <i class="bi bi-check-circle"></i> Mark Attendance
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card border-info">
+                                    <div class="card-header bg-info text-white">
+                                        <h6 class="mb-0"><i class="bi bi-question-circle"></i> How it works</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-unstyled">
+                                            <li><i class="bi bi-1-circle text-primary"></i> Join your online class</li>
+                                            <li><i class="bi bi-2-circle text-primary"></i> Wait for teacher to share token</li>
+                                            <li><i class="bi bi-3-circle text-primary"></i> Enter token within time limit</li>
+                                            <li><i class="bi bi-4-circle text-primary"></i> Attendance marked automatically</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Interactive Polls Section -->
+                    <div id="active-polls-section" class="mt-4" style="display: none;">
+                        <div class="card border-success">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0"><i class="bi bi-chat-square-dots"></i> Interactive Poll</h6>
+                            </div>
+                            <div class="card-body">
+                                <div id="poll-content">
+                                    <!-- Poll content will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Online Attendance History -->
+                    <div class="online-history-section mt-4">
+                        <h5><i class="bi bi-clock-history"></i> Recent Online Attendance</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Subject</th>
+                                        <th>Method</th>
+                                        <th>Status</th>
+                                        <th>Time Marked</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="online-attendance-history">
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-4">
+                                            <i class="bi bi-inbox fs-1 mb-2 d-block"></i>
+                                            No online attendance records yet
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Timetable Tab -->
+            <div id="timetable" class="tab-content">
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3><i class="bi bi-clock"></i> Weekly Timetable</h3>
+                    </div>
+                    <div class="timetable-container">
+                        <div id="timetableContent" class="p-3">
+                            <div class="table-responsive">
+                                <table class="table table-bordered timetable-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Time/Day</th>
+                                            <th>Monday</th>
+                                            <th>Tuesday</th>
+                                            <th>Wednesday</th>
+                                            <th>Thursday</th>
+                                            <th>Friday</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>09:00 - 10:00</td>
+                                            <td>Mathematics</td>
+                                            <td>Physics</td>
+                                            <td>Programming</td>
+                                            <td>Mathematics</td>
+                                            <td>Data Structures</td>
+                                        </tr>
+                                        <tr>
+                                            <td>10:00 - 11:00</td>
+                                            <td>Physics</td>
+                                            <td>Programming</td>
+                                            <td>Mathematics</td>
+                                            <td>Data Structures</td>
+                                            <td>Mathematics</td>
+                                        </tr>
+                                        <tr>
+                                            <td>11:30 - 12:30</td>
+                                            <td>Programming</td>
+                                            <td>Data Structures</td>
+                                            <td>Physics</td>
+                                            <td>Programming</td>
+                                            <td>Physics</td>
+                                        </tr>
+                                        <tr>
+                                            <td>12:30 - 01:30</td>
+                                            <td>Data Structures</td>
+                                            <td>Mathematics</td>
+                                            <td>Data Structures</td>
+                                            <td>Physics</td>
+                                            <td>Programming</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Academics Tab -->
+            <div id="academics" class="tab-content">
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3><i class="bi bi-book"></i> Semester-wise Performance</h3>
+                    </div>
+                    <div class="semester-performance-container">
+                        <table class="semester-performance-table">
+                            <thead>
+                                <tr>
+                                    <th>Semester</th>
+                                    <th>SGPA</th>
+                                    <th>Credits Earned</th>
+                                    <th>Credits Attempted</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="semesterPerformanceBody">
+                                <tr>
+                                    <td>Semester 1</td>
+                                    <td class="text-primary fw-bold">8.2</td>
+                                    <td>20</td>
+                                    <td>20</td>
+                                    <td><span class="badge bg-success">Passed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Semester 2</td>
+                                    <td class="text-primary fw-bold">8.5</td>
+                                    <td>22</td>
+                                    <td>22</td>
+                                    <td><span class="badge bg-success">Passed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Semester 3</td>
+                                    <td class="text-primary fw-bold">8.7</td>
+                                    <td>24</td>
+                                    <td>24</td>
+                                    <td><span class="badge bg-success">Passed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Semester 4</td>
+                                    <td class="text-primary fw-bold">8.3</td>
+                                    <td>22</td>
+                                    <td>22</td>
+                                    <td><span class="badge bg-success">Passed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Semester 5</td>
+                                    <td class="text-primary fw-bold">8.6</td>
+                                    <td>24</td>
+                                    <td>24</td>
+                                    <td><span class="badge bg-success">Passed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Semester 6</td>
+                                    <td class="text-primary fw-bold">8.5</td>
+                                    <td>22</td>
+                                    <td>22</td>
+                                    <td><span class="badge bg-success">Passed</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="section-card mt-4">
+                    <div class="section-header">
+                        <h3><i class="bi bi-graph-up"></i> Performance Trends</h3>
+                    </div>
+                    <div class="performance-trends-container p-3">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="chart-container">
+                                    <h4 class="text-center mb-3">SGPA Trend</h4>
+                                    <canvas id="sgpaTrendChart" width="400" height="200"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="chart-container">
+                                    <h4 class="text-center mb-3">Credits Earned</h4>
+                                    <canvas id="creditsChart" width="400" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance History -->
+        <div class="attendance-history-section">
+            <div class="history-header">
+                <h3><i class="bi bi-calendar3"></i> Recent Attendance History</h3>
+            </div>
+            
+            <div class="attendance-table-container">
+                <table class="attendance-history-table">
+                    <thead>
+                        <tr id="subjectHeaderRow">
+                            <th class="sticky-left">Date</th>
+                            <th>Mathematics</th>
+                            <th>Physics</th>
+                            <th>Programming</th>
+                            <th>Data Structures</th>
+                            <th>Total</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceHistoryBody">
+                        <tr>
+                            <td class="sticky-left">2023-10-15</td>
+                            <td><span class="attendance-status-icon present">✓</span></td>
+                            <td><span class="attendance-status-icon present">✓</span></td>
+                            <td><span class="attendance-status-icon present">✓</span></td>
+                            <td><span class="attendance-status-icon absent">✗</span></td>
+                            <td><strong>3/4</strong></td>
+                            <td><strong class="text-warning">75%</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="sticky-left">2023-10-14</td>
+                            <td><span class="attendance-status-icon present">✓</span></td>
+                            <td><span class="attendance-status-icon present">✓</span></td>
+                            <td><span class="attendance-status-icon present">✓</span></td>
+                            <td><span class="attendance-status-icon present">✓</span></td>
+                            <td><strong>4/4</strong></td>
+                            <td><strong class="text-success">100%</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="sticky-left">2023-10-13</td>
+                            <td><span class="attendance-status-icon present">✓</span></td>
+                            <td><span class="attendance-status-icon absent">✗</span></td>
+                            <td><span class="attendance-status-icon present">✓</span></td>
+                            <td><span class="attendance-status-icon present">✓</span></td>
+                            <td><strong>3/4</strong></td>
+                            <td><strong class="text-warning">75%</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="sticky-left">2023-10-12</td>
+                            <td><span class="attendance-status-icon present">✓</span></td>
+                            <td><span class="attendance-status-icon present">✓</span></td>
+                            <td><span class="attendance-status-icon present">✓</span></td>
+                            <td><span class="attendance-status-icon present">✓</span></td>
+                            <td><strong>4/4</strong></td>
+                            <td><strong class="text-success">100%</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="sticky-left">2023-10-11</td>
+                            <td><span class="attendance-status-icon present">✓</span></td>
+                            <td><span class="attendance-status-icon present">✓</span></td>
+                            <td><span class="attendance-status-icon absent">✗</span></td>
+                            <td><span class="attendance-status-icon present">✓</span></td>
+                            <td><strong>3/4</strong></td>
+                            <td><strong class="text-warning">75%</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="action-btn primary" onclick="downloadReport()">
+                <i class="bi bi-download"></i>
+                Download Report
+            </button>
+            <button class="action-btn secondary" onclick="contactTeacher()">
+                <i class="bi bi-envelope"></i>
+                Contact Teacher
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Global variables
+        const studentRollNumber = '{{ student_roll or "S12345" }}';
+        const studentName = '{{ student_name or "Student Name" }}';
+        
+        // Initialize student dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initTabNavigation();
+            initializeAcademicPerformance();
+            renderCharts();
+            initOnlineAttendance();
+        });
+        
+        // Tab navigation functionality
+        function initTabNavigation() {
+            const tabLinks = document.querySelectorAll('.nav-link[data-tab]');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            // Set initial active tab
+            const activeTabId = window.location.hash.substring(1) || 'dashboard';
+            setActiveTab(activeTabId);
+            
+            // Add click event listeners to tab links
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tabId = this.getAttribute('data-tab');
+                    setActiveTab(tabId);
+                    window.location.hash = tabId;
+                });
+            });
+            
+            // Function to set active tab
+            function setActiveTab(tabId) {
+                // Remove active class from all tabs and links
+                tabContents.forEach(tab => tab.classList.remove('active'));
+                tabLinks.forEach(link => link.classList.remove('active'));
+                
+                // Add active class to selected tab and link
+                const selectedTab = document.getElementById(tabId);
+                const selectedLink = document.querySelector(`.nav-link[data-tab="${tabId}"]`);
+                
+                if (selectedTab) selectedTab.classList.add('active');
+                if (selectedLink) selectedLink.classList.add('active');
+            }
+        }
+        
+        // Render charts
+        function renderCharts() {
+            // SGPA Chart
+            const sgpaCtx = document.getElementById('sgpaChart').getContext('2d');
+            new Chart(sgpaCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5', 'Sem 6'],
+                    datasets: [{
+                        label: 'SGPA',
+                        data: [8.2, 8.5, 8.7, 8.3, 8.6, 8.5],
+                        borderColor: '#0d6efd',
+                        backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 7,
+                            max: 10
+                        }
+                    }
+                }
+            });
+            
+            // SGPA Trend Chart
+            const sgpaTrendCtx = document.getElementById('sgpaTrendChart').getContext('2d');
+            new Chart(sgpaTrendCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5', 'Sem 6'],
+                    datasets: [{
+                        label: 'SGPA',
+                        data: [8.2, 8.5, 8.7, 8.3, 8.6, 8.5],
+                        borderColor: '#0d6efd',
+                        backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 7,
+                            max: 10
+                        }
+                    }
+                }
+            });
+            
+            // Credits Chart
+            const creditsCtx = document.getElementById('creditsChart').getContext('2d');
+            new Chart(creditsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5', 'Sem 6'],
+                    datasets: [{
+                        label: 'Credits Earned',
+                        data: [20, 22, 24, 22, 24, 22],
+                        backgroundColor: '#198754'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+        
+        // Academic Performance Functions
+        function initializeAcademicPerformance() {
+            updateAcademicStats();
+        }
+
+        function updateAcademicStats() {
+            // These would typically come from an API
+            document.getElementById('currentSGPA').textContent = '8.5';
+            document.getElementById('overallCGPA').textContent = '8.2';
+            document.getElementById('completedSemesters').textContent = '6';
+            document.getElementById('academicRank').textContent = '#25';
+        }
+        
+        // Action functions
+        function refreshData() {
+            showNotification('Data refreshed successfully', 'success');
+        }
+        
+        function downloadReport() {
+            // Create a simple attendance report
+            const reportContent = `
+                Student Attendance Report
+                ========================
+                Name: ${studentName}
+                Roll Number: ${studentRollNumber}
+                Generated: ${new Date().toLocaleDateString()}
+                
+                This feature will be enhanced to generate detailed PDF reports.
+            `;
+            
+            const blob = new Blob([reportContent], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `attendance_report_${studentRollNumber}.txt`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            showNotification('Report downloaded successfully', 'success');
+        }
+        
+        function contactTeacher() {
+            showNotification('This feature will allow you to contact your teacher directly', 'info');
+        }
+        
+        // ========== ONLINE ATTENDANCE FUNCTIONS ==========
+        
+        function initOnlineAttendance() {
+            // Initialize token form
+            const tokenForm = document.getElementById('tokenForm');
+            if (tokenForm) {
+                tokenForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    submitAttendanceToken();
+                });
+            }
+            
+            // Load active sessions
+            loadActiveOnlineSessions();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(loadActiveOnlineSessions, 30000);
+            
+            // Check for popup notifications every 10 seconds
+            setInterval(checkForPopupNotifications, 10000);
+            checkForPopupNotifications(); // Check immediately on load
+        }
+        
+        async function loadActiveOnlineSessions() {
+            try {
+                const response = await fetch('/api/online/active_sessions');
+                const result = await response.json();
+                
+                const container = document.getElementById('active-online-sessions');
+                
+                if (result.success && result.sessions.length > 0) {
+                    container.innerHTML = result.sessions.map(session => `
+                        <div class="alert alert-info d-flex align-items-center" role="alert">
+                            <i class="bi bi-broadcast me-3 fs-4"></i>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">${session.subject}</h6>
+                                <small class="text-muted">
+                                    Section: ${session.section_id} | 
+                                    Started: ${new Date(session.start_time).toLocaleTimeString()}
+                                </small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-success">${session.attendance_summary.unique_attendees} present</span>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = `
+                        <div class="text-center py-4 text-muted">
+                            <i class="bi bi-wifi-off fs-1 mb-3 d-block"></i>
+                            <p>No active online sessions at the moment</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading active sessions:', error);
+            }
+        }
+        
+        async function submitAttendanceToken() {
+            const tokenInput = document.getElementById('attendanceToken');
+            const token = tokenInput.value.trim();
+            
+            if (token.length !== 6) {
+                showNotification('Please enter a valid 6-digit token', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/online/mark_attendance_token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        token_code: token
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    tokenInput.value = '';
+                    // Reload sessions to show updated attendance
+                    loadActiveOnlineSessions();
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            } catch (error) {
+                showNotification('Error marking attendance. Please try again.', 'error');
+            }
+        }
+        
+        async function submitPollResponse(pollId, answer) {
+            try {
+                const response = await fetch('/api/online/submit_poll', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        poll_id: pollId,
+                        answer: answer
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    // Hide the poll section after submission
+                    document.getElementById('active-polls-section').style.display = 'none';
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            } catch (error) {
+                showNotification('Error submitting poll response. Please try again.', 'error');
+            }
+        }
+        
+        async function checkForPopupNotifications() {
+            try {
+                const response = await fetch('/api/online/student_popups');
+                const result = await response.json();
+                
+                if (result.success && result.popups.length > 0) {
+                    // Show popup notifications
+                    result.popups.forEach(popup => {
+                        showAttendancePopup(popup);
+                    });
+                }
+            } catch (error) {
+                console.error('Error checking for popup notifications:', error);
+            }
+        }
+        
+        let shownPopups = new Set(); // Track shown popups to avoid duplicates
+        
+        function showAttendancePopup(popup) {
+            // Avoid showing the same popup multiple times
+            if (shownPopups.has(popup.popup_id)) {
+                return;
+            }
+            
+            shownPopups.add(popup.popup_id);
+            
+            // Create popup modal
+            const popupModal = `
+                <div class="modal fade" id="attendancePopup_${popup.popup_id}" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow-lg">
+                            <div class="modal-header bg-primary text-white text-center">
+                                <div class="w-100">
+                                    <h4 class="modal-title fw-bold mb-1">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>Attendance Check
+                                    </h4>
+                                    <p class="mb-0">${popup.subject}</p>
+                                </div>
+                            </div>
+                            <div class="modal-body text-center p-4">
+                                <div class="mb-4">
+                                    <div class="attendance-icon mb-3">
+                                        <i class="fas fa-user-check text-success" style="font-size: 4rem;"></i>
+                                    </div>
+                                    <h5 class="text-primary mb-3">${popup.message}</h5>
+                                    <div class="alert alert-warning">
+                                        <i class="fas fa-clock me-2"></i>
+                                        <strong>Time Remaining: <span id="timeLeft_${popup.popup_id}">${popup.time_left_minutes} minutes</span></strong>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-success btn-lg" onclick="confirmAttendance('${popup.popup_id}')">
+                                        <i class="fas fa-check-circle me-2"></i>I'm Present - Mark My Attendance
+                                    </button>
+                                    <button class="btn btn-outline-secondary" onclick="dismissPopup('${popup.popup_id}')">
+                                        <i class="fas fa-times me-2"></i>Not Now
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="modal-footer bg-light text-center border-0">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    This popup will auto-close when time expires
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing popup modal if any
+            const existingModal = document.getElementById(`attendancePopup_${popup.popup_id}`);
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to page
+            document.body.insertAdjacentHTML('beforeend', popupModal);
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById(`attendancePopup_${popup.popup_id}`));
+            modal.show();
+            
+            // Start countdown timer
+            startPopupCountdown(popup.popup_id, popup.expires_at);
+            
+            // Play notification sound (optional)
+            playNotificationSound();
+        }
+        
+        function startPopupCountdown(popupId, expiresAt) {
+            const interval = setInterval(() => {
+                const now = new Date().getTime();
+                const expiry = new Date(expiresAt).getTime();
+                const timeLeft = expiry - now;
+                
+                if (timeLeft > 0) {
+                    const minutes = Math.floor(timeLeft / 60000);
+                    const seconds = Math.floor((timeLeft % 60000) / 1000);
+                    
+                    const timeLeftElement = document.getElementById(`timeLeft_${popupId}`);
+                    if (timeLeftElement) {
+                        timeLeftElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    }
+                } else {
+                    // Time expired - close modal
+                    clearInterval(interval);
+                    dismissPopup(popupId);
+                    showNotification('Attendance popup expired', 'warning');
+                }
+            }, 1000);
+        }
+        
+        async function confirmAttendance(popupId) {
+            try {
+                const response = await fetch('/api/online/respond_popup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        popup_id: popupId
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    dismissPopup(popupId);
+                    
+                    // Refresh active sessions to show updated attendance
+                    loadActiveOnlineSessions();
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            } catch (error) {
+                showNotification('Error marking attendance. Please try again.', 'error');
+            }
+        }
+        
+        function dismissPopup(popupId) {
+            const modal = bootstrap.Modal.getInstance(document.getElementById(`attendancePopup_${popupId}`));
+            if (modal) {
+                modal.hide();
+            }
+            
+            // Remove from DOM after animation
+            setTimeout(() => {
+                const modalElement = document.getElementById(`attendancePopup_${popupId}`);
+                if (modalElement) {
+                    modalElement.remove();
+                }
+            }, 500);
+        }
+        
+        function playNotificationSound() {
+            // Create a subtle notification sound
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+        
+        // ========== END ONLINE ATTENDANCE FUNCTIONS ==========
+        
+        // Notification system
+        function showNotification(message, type = 'info') {
+            // Remove any existing notifications first
+            const existingNotifications = document.querySelectorAll('.custom-notification');
+            existingNotifications.forEach(notification => notification.remove());
+            
+            const notification = document.createElement('div');
+            notification.className = `custom-notification alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 300px;';
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

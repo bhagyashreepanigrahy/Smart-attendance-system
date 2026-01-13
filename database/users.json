@@ -1,0 +1,22 @@
+{
+  "dr.smith": {
+    "password": "teacher123",
+    "name": "Dr. John Smith",
+    "sections": ["CSE_DS", "CSEAIML_A", "CSEAIML_C"]
+  },
+  "prof.johnson": {
+    "password": "teacher456",
+    "name": "Professor Sarah Johnson",
+    "sections": ["CSE_DS", "CSEAIML_A", "CSEAIML_B", "CSEAIML_C"]
+  },
+  "uddhab": {
+    "password": "uddhab",
+    "name": "System Administrator",
+    "sections": ["CSE_DS", "CSEAIML_A", "CSEAIML_B","CSEAIML_C"]
+  },
+  "admin": {
+    "password": "admin123",
+    "name": "HOD Computer Science",
+    "sections": ["CSE_DS", "CSEAIML_A", "CSEAIML_B", "CSEAIML_C"]
+  }
+}
